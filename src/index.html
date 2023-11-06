@@ -3,10 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Images search</title>
+    <title>Search images</title>
     <script type="module" src="./js/index.js"></script>
   </head>
   <body>
+    <header>
+      <div class="header">
+        <form class="search-form" id="search-form">
+          <input
+            class="search-input"
+            type="text"
+            name="searchQuery"
+            autocomplete="off"
+            placeholder="Search images..."
+          />
+          <button class="submit-btn" type="submit">
+            <svg class="search" width="18" height="18" aria-label="search">
+              <use class="icon" href="./img/lupa.svg#lupa"></use>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </header>
+    <section class="gallery-section">
+      <div class="container">
+        <div class="gallery overlay">
+          <!--photo gallery -->
+        </div>
+      </div>
+    </section>
+    <div class="load none">
+      <button type="button" class="load-more">Load more</button>
+    </div>
     <!-- ❗️❗️❗️ Add partials like so for every page -->
     <!-- <include src="./partials/example.html"></include> -->
   </body>
