@@ -1,7 +1,10 @@
 import { Notify } from "notiflix"
 import { getPhoto } from "./pixabay-api";
+import { markup } from "./markup";
+import simpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import '../css/style.css'
+
 
 const selectors = {
   form: document.querySelector('.search-form'),
@@ -18,10 +21,11 @@ let page = 1;
 
 selectors.form.addEventListener('submit', onSubmit)
 
-function onSubmit(event) {
+async function onSubmit(event) {
   event.preventDefault();
   const query = selectors.searchInput.value
   selectors.form.reset();
+  selectors.gallery.innerHTML = '';
   if (!query.trim()) {
     return Notify.warning('Please enter some keyword to search images!')
   }
@@ -31,15 +35,48 @@ function onSubmit(event) {
   selectors.loadDiv.classList.add('none')
   page = 1;
   searchWord = query;
-  return getPhoto(searchWord);
+  srartEngine(page)
 }
 
 selectors.loadBtn.addEventListener('click', onClick)
 
-function onClick() {
-  selectors.loadDiv.classList.add('none')
-  page += 1;
-  return getPhoto(searchWord, page)
+async function srartEngine(page) {
+  const galleryItems = await getPhoto(searchWord, page);
+  const hits = galleryItems.data.hits;
+  const totalHits = galleryItems.data.totalHits;
+
+    if (hits.length === 0) {
+    return Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+  }
+  if (page == 1 && hits.length > 0) {
+    Notify.success(`Hooray! We found ${totalHits} "${searchWord}" images.`)
+    selectors.gallery.innerHTML = '';
+  }
+    if (page < Math.ceil(totalHits / 40)) {
+      selectors.loadDiv.classList.remove('none')
+  }
+  else {
+    Notify.info("We're sorry, but you've reached the end of search results.")
+  }
+
+  markup(hits, page, searchWord, totalHits);
+    if (page < Math.ceil(totalHits / 40)) {
+      return selectors.loadDiv.classList.remove('none')
+  }
+  selectors.loadDiv.classList.add('none');
 }
+
+async function onClick() {
+  page += 1;
+  srartEngine(page)
+  simple.refresh();
+}
+
+const simple = new SimpleLightbox('.gallery a', {
+        captionsData: 'alt',
+        captionPosition: 'bottom',
+        captionDelay: 250,
+        captionClass: 'caption' 
+});
 
 export { selectors }
